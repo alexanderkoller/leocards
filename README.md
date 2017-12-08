@@ -3,6 +3,6 @@
 
 ```
 conda install -f lxml
-pip install urllib3
+pip install urllib3 selenium
 ```
 

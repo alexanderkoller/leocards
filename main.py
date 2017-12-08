@@ -1,8 +1,56 @@
-import urllib
-from lxml import etree
+from flask import Flask, render_template, send_from_directory, request, flash, redirect, url_for
+from flask_wtf import Form, FlaskForm
+from wtforms import TextField, StringField
 
-url =  "http://www.example.com/servlet/av/ResultTemplate=AVResult.html"
-response = urllib.urlopen(url)
-htmlparser = etree.HTMLParser()
-tree = etree.parse(response, htmlparser)
-tree.xpath("x")
+import backend
+import leo
+
+app = Flask(__name__)
+app.secret_key = 'lkjasdlkajsd'
+# app.debug = True
+app.jinja_env.filters['zip'] = zip
+
+sections = [('section-subst', "Substantive"),
+            ('section-verb', "Verben"),
+            ('section-adjadv', "Adjektive/Adverbien"),
+            ('section-praep', "Präpositionen/Pronomen/..."),
+            ('section-phrase', "Phrasen"),
+            ('section-example', "Beispiele")]
+
+class WordForm(FlaskForm):
+    word = StringField("Französisches Wort")
+
+@app.route("/", methods=("GET",))
+def main():
+    form = WordForm()
+    return render_template("main.html", form=form, from_dict={}, to_dict={}, sections=sections)
+
+@app.route("/", methods=("POST",))
+def do_main():
+    form = WordForm()
+    if form.validate_on_submit():
+        from_dict, to_dict = leo.lookup(form.word.data)
+        return render_template("main.html", form=form, from_dict=from_dict, to_dict=to_dict, sections=sections)
+    else:
+        return render_template("main.html", form=form, from_dict={}, to_dict={}, sections=sections)
+
+@app.route("/save_vocab")
+def save_vocab():
+    f = request.args.get("from")
+    t = request.args.get("to")
+
+    response = backend.add_vocab(f, t)
+
+    if response == 200:
+        flash("Wort hinzugefügt: %s / %s" % (f, t))
+        return redirect("/")
+    else:
+        flash("Fehler!")
+        return redirect("/")
+
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
+
+app.run(host='0.0.0.0')

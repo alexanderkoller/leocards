@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Hello, world!</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/main.css" />
+  </head>
+  <body>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+{% if form.errors %}
+  {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+    {% for error in field_errors %}
+      <div class="alert alert-error" role="alert">{{ form[field_name].label }}: {{ error }}</div>
+    {% endfor %}
+  {% endfor %}
+{% endif %}
+
+
+
+    <form action="/" method="POST">
+      {{ form.hidden_tag() }}
+
+      <div class="col-lg-6">
+        <div class="input-group">
+          {{ form.word(class="form-control", placeholder="Französisches Wort") }}
+          <!--<input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">-->
+          <span class="input-group-btn">
+            <button class="btn btn-secondary" type="button">Suchen</button>
+          </span>
+        </div>
+      </div>
+    </form>
+
+    <div>
+        {% for section_id, section_title in sections %}
+          {% if from_dict[section_id] %}
+            <h3 style="padding-top: 3ex">{{ section_title }}</h3>
+
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" width="10%">#</th>
+                  <th scope="col" width="40%">Französisch</th>
+                  <th scope="col" width="40%">Deutsch</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for f, t in from_dict[section_id]|zip(to_dict[section_id]) %}
+                <tr>
+                    <td><a href="/save_vocab?from={{ f }}&to={{ t }}"><img src="/static/save-md.png" height="28"/></a></td>
+                    <td>{{ f }}</td>
+                    <td>{{ t }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        {% endfor %}
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  </body>
+</html>
