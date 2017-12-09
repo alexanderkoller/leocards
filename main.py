@@ -1,8 +1,10 @@
+import cherrypy
 from flask import Flask, render_template, send_from_directory, request, flash, redirect, url_for
 from flask_wtf import Form, FlaskForm
 from wtforms import TextField, StringField
 
 import backend
+import conf
 import leo
 
 
@@ -60,4 +62,24 @@ def save_vocab():
 def send_static(path):
     return send_from_directory('static', path)
 
-app.run(host='0.0.0.0')
+
+
+
+#
+#
+# # app.run(host='0.0.0.0')
+#
+# http_server = HTTPServer(WSGIContainer(app))
+# print(conf.port)
+# http_server.listen(conf.port)
+# IOLoop.instance().start()
+#
+
+cherrypy.tree.graft(app.wsgi_app, '/')
+cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': conf.port,
+                        'engine.autoreload.on': False,
+                        })
+
+if __name__ == '__main__':
+    cherrypy.engine.start()
