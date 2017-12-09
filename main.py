@@ -5,10 +5,17 @@ from wtforms import TextField, StringField
 import backend
 import leo
 
+
+
+
 app = Flask(__name__)
 app.secret_key = 'lkjasdlkajsd'
 # app.debug = True
 app.jinja_env.filters['zip'] = zip
+
+
+
+
 
 sections = [('section-subst', "Substantive"),
             ('section-verb', "Verben"),

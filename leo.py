@@ -10,6 +10,8 @@ from collections import defaultdict
 from lxml import etree
 from lxml.html.soupparser import fromstring
 
+import conf
+
 http = urllib3.PoolManager()
 
 fromlang_xpath = '//*/table/tbody/tr[*]/td[5]/samp'
@@ -34,7 +36,7 @@ def extract_words(tree, xpath, text_xpath):
     return d
 
 def lookup(word):
-    eurl = "https://dict.leo.org/%s/%s" % (quote("französisch-deutsch"), quote(word))
+    eurl = conf.make_leo_path(quote(word))
     print(eurl)
 
     response = http.request("GET", eurl)
