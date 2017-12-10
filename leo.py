@@ -28,23 +28,16 @@ def extract_words(tree, xpath, text_xpath):
     for a in tree.xpath(xpath):
         words = [w.strip() for w in a.xpath(text_xpath)]
         samp = " ".join([w for w in words if w])
-
         clazz = a.xpath("../../../../../@id")[0]
-
         d[clazz].append(samp)
 
     return d
 
 def lookup(word):
     eurl = conf.make_leo_path(quote(word))
-    print(eurl)
-
     response = http.request("GET", eurl)
     htmlparser = etree.HTMLParser()
     tree = etree.fromstring(response.data)
-
-    with open("response.txt", "w") as f:
-        print(etree.tostring(tree), file=f)
 
     from_dict = extract_words(tree, fromlang_xpath, fromlang_text_xpath)
     to_dict = extract_words(tree, tolang_xpath, tolang_text_xpath)

@@ -13,9 +13,5 @@ def add_vocab(from_word, to_word):
     }
 
     response = http.request('POST', conf.gf_url, params, headers)
-    # print(response.status)
-    # print(response.data)
     return response.status
 
-
-# add_vocab("from", "to")

@@ -8,15 +8,10 @@ import conf
 import leo
 
 
-
-
 app = Flask(__name__)
 app.secret_key = 'lkjasdlkajsd'
 # app.debug = True
 app.jinja_env.filters['zip'] = zip
-
-
-
 
 
 sections = [('section-subst', "Substantive"),
@@ -26,9 +21,11 @@ sections = [('section-subst', "Substantive"),
             ('section-phrase', "Phrasen"),
             ('section-example', "Beispiele")]
 
+    
 class WordForm(FlaskForm):
-    word = StringField("Französisches Wort")
+    word = StringField("Dieses Wort nachschlagen")
 
+    
 @app.route("/", methods=("GET",))
 def main():
     form = WordForm()
@@ -63,17 +60,6 @@ def send_static(path):
     return send_from_directory('static', path)
 
 
-
-
-#
-#
-# # app.run(host='0.0.0.0')
-#
-# http_server = HTTPServer(WSGIContainer(app))
-# print(conf.port)
-# http_server.listen(conf.port)
-# IOLoop.instance().start()
-#
 
 cherrypy.tree.graft(app.wsgi_app, '/')
 cherrypy.config.update({'server.socket_host': '0.0.0.0',
